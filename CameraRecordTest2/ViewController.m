@@ -66,8 +66,6 @@
         //        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum (moviePath)) {
         //            UISaveVideoAtPathToSavedPhotosAlbum (moviePath, nil, nil, nil);
         //        }
-        
-        
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
     
