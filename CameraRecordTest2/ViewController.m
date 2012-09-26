@@ -63,6 +63,13 @@
     if (CFStringCompare ((CFStringRef)mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
         NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
         debugLog(@"movie path = %@", moviePath);
+        NSFileManager * fileManager = [NSFileManager defaultManager];
+        NSDictionary * attr = [fileManager attributesOfItemAtPath:moviePath error:nil];
+        // error checking
+        unsigned long long size = [attr fileSize];
+        debugLog(@"file size = %lld KB", size/1000);
+        
+        
         //        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum (moviePath)) {
         //            UISaveVideoAtPathToSavedPhotosAlbum (moviePath, nil, nil, nil);
         //        }
