@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface ViewController ()
 
@@ -21,7 +23,7 @@
  一分钟的视频:
  最小6M, 最大19M
  60分钟的视频：
- 最小60M, 最大1.14G
+ 最小360M, 最大1.14G
 
  UIImagePickerControllerQualityType640x480
  一分钟视频：
@@ -32,12 +34,15 @@
  1.3M
 
  */
-@implementation ViewController
+@implementation ViewController {
+    NSString * _moviePath;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    _moviePath = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +83,18 @@
     [self presentViewController:picker animated:YES completion:nil];
 }
 
+- (IBAction)playButtonPressed:(id)sender {
+    debugMethod();
+    if (_moviePath != nil) {
+        NSFileManager * fileManager = [NSFileManager defaultManager];
+        if ([fileManager fileExistsAtPath:_moviePath] == NO) {
+            debugLog(@"file is not exist");
+            return;
+        }
+        MPMoviePlayerViewController * player = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:_moviePath]];
+        [self presentViewController:player animated:YES completion:nil];
+    }
+}
 
 #pragma mark - UIImagePickerController Delegate
 
@@ -88,6 +105,7 @@
     if (CFStringCompare ((CFStringRef)mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
         NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
         debugLog(@"movie path = %@", moviePath);
+        _moviePath = moviePath;
         NSFileManager * fileManager = [NSFileManager defaultManager];
         NSDictionary * attr = [fileManager attributesOfItemAtPath:moviePath error:nil];
         // error checking
