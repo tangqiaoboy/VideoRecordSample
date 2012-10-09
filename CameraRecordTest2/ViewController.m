@@ -13,6 +13,25 @@
 
 @end
 
+
+/**
+ *
+
+ UIImagePickerControllerQualityTypeMedium
+ 一分钟的视频:
+ 最小6M, 最大19M
+ 60分钟的视频：
+ 最小60M, 最大1.14G
+
+ UIImagePickerControllerQualityType640x480
+ 一分钟视频：
+ 26M,30M
+
+ UIImagePickerControllerQualityTypeLow
+ 一分钟视频：
+ 1.3M
+
+ */
 @implementation ViewController
 
 - (void)viewDidLoad
@@ -26,18 +45,25 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void)setupPicker:(UIImagePickerController *)picker {
+    picker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+    picker.allowsEditing = YES;
+    //picker.videoMaximumDuration = 60.0f;
+    picker.delegate = self;
+    picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
+}
+
 - (IBAction)libraryButtonPressed:(id)sender {
     debugMethod();
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum] == NO) {
         return;
     }
-    
+
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    picker.delegate = self;
-    picker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+    [self setupPicker:picker];
     [self presentViewController:picker animated:YES completion:nil];
-    
 }
 
 - (IBAction)cameraButtonPressed:(id)sender {
@@ -45,11 +71,10 @@
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
         return;
     }
-    
+
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    picker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-    picker.delegate = self;
+    [self setupPicker:picker];
     [self presentViewController:picker animated:YES completion:nil];
 }
 
@@ -67,15 +92,15 @@
         NSDictionary * attr = [fileManager attributesOfItemAtPath:moviePath error:nil];
         // error checking
         unsigned long long size = [attr fileSize];
-        debugLog(@"file size = %lld KB", size/1000);
-        
-        
+        NSString * message = [NSString stringWithFormat:@"file size = %lld KB", size/1000];
+        debugLog(@"%@", message);
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:nil message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
         //        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum (moviePath)) {
         //            UISaveVideoAtPathToSavedPhotosAlbum (moviePath, nil, nil, nil);
         //        }
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
-    
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
